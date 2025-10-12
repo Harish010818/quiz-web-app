@@ -1,4 +1,4 @@
-import type { QuizWithQuestions } from "../../../shared/schema";
+import type { QuizWithQuestions } from "../../shared/schema";
 
 export const sampleQuizQus: QuizWithQuestions[] = [
   /* Quiz 1: Science Fundamentals (id = "1") */

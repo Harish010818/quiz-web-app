@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import type {ReactNode} from "react";
-import type { QuizWithQuestions, Attempt } from "../../../shared/schema";
+import type { QuizWithQuestions, Attempt } from "../../shared/schema";
 
 interface QuizState {
   currentQuiz: QuizWithQuestions | null;

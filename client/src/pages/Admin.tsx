@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import QuizForm from "../components/QuizForm";
 import QuizList from "../components/QuizList";
-import type { Quiz } from "../../../shared/schema";
+import type { Quiz } from "../../shared/schema";
 import { apiRequest } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
 import { Button } from "../components/ui/button";

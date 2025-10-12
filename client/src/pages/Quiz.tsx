@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import type { QuizWithQuestions } from "../../../shared/schema"
+import type { QuizWithQuestions } from "../../shared/schema"
 import { useQuiz } from "../contexts/QuizContext";
 import Navbar from "../components/Navbar";
 import QuizPlayer from "../components/QuizPlayer";

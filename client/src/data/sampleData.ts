@@ -1,4 +1,4 @@
-import type { Quiz } from "../../../shared/schema";
+import type { Quiz } from "../../shared/schema";
 
 export const sampleQuizData: Quiz[] = [
   {

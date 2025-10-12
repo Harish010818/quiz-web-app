@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import type { Question, Option } from "../../../shared/schema";
+import type { Question, Option } from "../../shared/schema";
 import { useQuiz } from "../contexts/QuizContext";
 import { useEffect } from "react";
 

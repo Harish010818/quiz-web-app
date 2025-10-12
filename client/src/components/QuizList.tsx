@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import  type { Quiz } from "../../../shared/schema";
+import  type { Quiz } from "../../shared/schema";
 import { Clock, Edit, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { sampleQuizData } from "../data/sampleData";
