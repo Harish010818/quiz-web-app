@@ -70,6 +70,8 @@ export default function Admin() {
   const handleEdit = (quiz: Quiz) => {
     // For now, just switch to create tab
     // In a full implementation, we'd populate the form with quiz data
+    console.log(quiz);
+    
     setActiveTab("create");
     toast({ 
       title: "Edit Quiz", 
