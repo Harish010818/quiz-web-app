@@ -108,7 +108,9 @@ export default function QuizList({ onEdit, onDelete, showAdminActions = false }:
                 <Clock className="w-4 h-4" />
                 <span>~15 min</span>
                 <span className="mx-2">•</span>
-                <span className="capitalize">{quiz.difficulty}</span>
+                <span className={`${quiz.difficulty=== 'hard' ? "text-red-600" 
+                     : quiz.difficulty === 'medium' ? "text-yellow-600" 
+                     : "text-green-600"} font-semibold`}>{quiz.difficulty}</span>
               </div>
               
               <div className="flex gap-2">
