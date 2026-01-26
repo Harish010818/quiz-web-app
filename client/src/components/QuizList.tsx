@@ -86,7 +86,7 @@ export default function QuizList({ onEdit, onDelete, showAdminActions = false }:
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {quizzes?.map((quiz) => (
-            <div key={quiz.id} className="quiz-card bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md cursor-pointer view-enter" data-testid={`quiz-card-${quiz.id}`}>
+            <div key={quiz.id} className="quiz-card  bg-card border border-border rounded-xl p-7 shadow-sm hover:shadow-md cursor-pointer view-enter" data-testid={`quiz-card-${quiz.id}`}>
               <div className="flex items-start justify-between mb-4">
                 <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${categoryColors[quiz.category as keyof typeof categoryColors] || 'from-gray-500 to-gray-600'} flex items-center justify-center text-white text-2xl`}>
                   {categoryIcons[quiz.category as keyof typeof categoryIcons] || '❓'}
