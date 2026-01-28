@@ -97,6 +97,7 @@ export const insertAttemptSchema = createInsertSchema(attempts).omit({
   createdAt: true,
 });
 
+
 // Create quiz with questions schema
 export const createQuizSchema = z.object({
   id: z.string().optional(),
