@@ -123,7 +123,4 @@ export type InsertOption = z.infer<typeof insertOptionSchema>;
 export type Attempt = typeof attempts.$inferSelect;
 export type InsertAttempt = z.infer<typeof insertAttemptSchema>;
 export type CreateQuiz = z.infer<typeof createQuizSchema>;
-
-export type QuizWithQuestions = Quiz & {
-  questions: (Question & { options: Option[] })[];
-};
+export type QuizWithQuestions = Quiz & {questions: (Question & { options: Option[] })[];};
