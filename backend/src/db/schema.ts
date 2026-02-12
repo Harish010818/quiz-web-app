@@ -111,6 +111,7 @@ export const createQuizSchema = z.object({
   })).min(1, "At least one question is required"),
 });
 
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -123,4 +124,4 @@ export type InsertOption = z.infer<typeof insertOptionSchema>;
 export type Attempt = typeof attempts.$inferSelect;
 export type InsertAttempt = z.infer<typeof insertAttemptSchema>;
 export type CreateQuiz = z.infer<typeof createQuizSchema>;
-export type QuizWithQuestions = Quiz & {questions: (Question & { options: Option[] })[];};
+export type QuizWithQuestions = Quiz & {questions: (Question & { options: Option[] })[]};
