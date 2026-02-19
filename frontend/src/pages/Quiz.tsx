@@ -1,14 +1,15 @@
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "wouter";
-import type { QuizWithQuestions } from "../../shared/schema"
-import { useQuiz } from "../contexts/QuizContext";
-import Navbar from "../components/Navbar";
-import QuizPlayer from "../components/QuizPlayer";
-import ResultPage from "../components/ResultPage";
-import { sampleQuizQus } from "../data/sampleDataWithQus";
+import { useEffect } from "react" ;
+import { useQuery } from "@tanstack/react-query" ;
+import { useParams } from "wouter" ;
+import type { QuizWithQuestions } from "../../shared/schema" ;
+import { useQuiz } from "../contexts/QuizContext" ;
+import Navbar from "../components/Navbar" ;
+import QuizPlayer from "../components/QuizPlayer" ;
+import ResultPage from "../components/ResultPage" ;
+import { sampleQuizQus } from "../data/sampleDataWithQus" ;
 
 export default function Quiz() {
+
   const { id } = useParams<{ id: string }>();
   const { quizState, startQuiz } = useQuiz();
 
@@ -47,7 +48,7 @@ export default function Quiz() {
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-foreground mb-2">Quiz Not Found</h1>
-            <p className="">The quiz you're looking for doesn't exist.</p>
+            <p className="text-muted-foreground">The quiz you're looking for doesn't exist.</p>
           </div>
         </div>
       </div>

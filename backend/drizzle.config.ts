@@ -4,7 +4,7 @@ dotenv.config();
 
 export default defineConfig (
 {
-  schema : "",
+  schema : "./src/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
       url: process.env.DATABASE_URL!
