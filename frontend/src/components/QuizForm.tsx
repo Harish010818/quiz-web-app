@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import  { CreateQuiz } from "../../shared/schema";
-import  { createQuizSchema } from "../../shared/schema";
+import type { CreateQuiz } from "../../shared/schema";
+// import  { createQuizSchema }  from "../../shared/schema";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -24,7 +24,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
   const queryClient = useQueryClient();
 
   const form = useForm<CreateQuiz>({
-    resolver: zodResolver(createQuizSchema),
+    // resolver: zodResolver(createQuizSchema),
 
     defaultValues: {
       title: "",

@@ -112,7 +112,6 @@ export default function Home() {
 
         {/* Quiz List */}
         <QuizList />
-
         {/* Leaderboard */}
         <Leaderboard />
       </main>

@@ -13,6 +13,7 @@ import type {
   QuizWithQuestions 
 } from '../../backend/src/db/schema';
 
+import {createQuizSchema } from '../../backend/src/db/schema';
 
 // Re-exporting them so your frontend components can use them
 export type { 
@@ -29,3 +30,5 @@ export type {
   CreateQuiz, 
   QuizWithQuestions 
 };
+
+export { createQuizSchema };
