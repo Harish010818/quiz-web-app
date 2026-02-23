@@ -100,7 +100,7 @@ export default function Home() {
                 <div className="text-center">
                   <div className="text-3xl font-bold text-accent">1K+</div>
                   <div className="text-sm text-muted-foreground mt-1">Players</div>
-                </div>
+                  </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-success">50+</div>
                   <div className="text-sm text-muted-foreground mt-1">Contributers</div>

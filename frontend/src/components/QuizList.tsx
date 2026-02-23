@@ -30,7 +30,7 @@ interface QuizListProps {
 export default function QuizList({ onEdit, onDelete, showAdminActions = false }: QuizListProps) {
   const { data: fetchedQuizzes, isLoading, error } = useQuery<Quiz[]>({
     queryKey: ["/api/quizzes"],
-  });
+  }); 
 
   const quizzes: Quiz[] = fetchedQuizzes ?? sampleQuizData;
 
