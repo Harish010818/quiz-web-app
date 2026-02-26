@@ -125,7 +125,7 @@ export default function Admin() {
               <QuizList 
                 showAdminActions={true}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                onDelete={handleDelete} 
               />
             </TabsContent>
           </Tabs>

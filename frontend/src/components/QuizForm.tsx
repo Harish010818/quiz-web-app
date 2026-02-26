@@ -1,15 +1,28 @@
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreateQuiz } from "../../shared/schema";
-import  { createQuizSchema }  from "../../shared/schema";
+import { createQuizSchema } from "../../shared/schema";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Plus, Trash2 } from "lucide-react";
 import { apiRequest } from "../lib/queryClient";
@@ -32,29 +45,32 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
       questions: [
         {
           text: "",
-          options: ["", "", ""],
+          options: ["", "", "", ""],
           correctOption: 0,
-        }
+        },
       ],
     },
   });
 
   const createQuizMutation = useMutation({
+
     mutationFn: async (data: CreateQuiz) => {
-      const response = await apiRequest("POST", "/api/quizzes", data);
+      const response = await apiRequest("POST", `${import.meta.env.VITE_API_URL}/api/v1/create-quiz`, data);
       return response.json();
     },
+
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      queryClient.invalidateQueries({ queryKey: [`${import.meta.env.VITE_API_URL}/api/quizzes`] });
       toast({ title: "Success", description: "Quiz created successfully!" });
       form.reset();
       onSuccess?.();
     },
+
     onError: (error: Error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to create quiz",
-        variant: "destructive"
+        variant: "destructive",
       });
     },
   });
@@ -67,14 +83,17 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
         text: "",
         options: ["", "", "", ""],
         correctOption: 0,
-      }
+      },
     ]);
   };
 
   const removeQuestion = (index: number) => {
     const currentQuestions = form.getValues("questions");
     if (currentQuestions.length > 1) {
-      form.setValue("questions", currentQuestions.filter((_, i) => i !== index));
+      form.setValue(
+        "questions",
+        currentQuestions.filter((_, i) => i !== index),
+      );
     }
   };
 
@@ -85,8 +104,12 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-10">
-        <h2 className="text-3xl font-bold text-foreground mb-2">Create New Quiz</h2>
-        <p className="text-muted-foreground">Add questions and options to build your quiz</p>
+        <h2 className="text-3xl font-bold text-foreground mb-2">
+          Create New Quiz
+        </h2>
+        <p className="text-muted-foreground">
+          Add questions and options to build your quiz
+        </p>
       </div>
 
       <Card>
@@ -122,7 +145,10 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger data-testid="quiz-category-select">
                             <SelectValue placeholder="Select category" />
@@ -150,7 +176,10 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                     <FormLabel>Difficulty</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="w-48" data-testid="quiz-difficulty-select">
+                        <SelectTrigger
+                          className="w-48"
+                          data-testid="quiz-difficulty-select"
+                        >
                           <SelectValue placeholder="Select difficulty" />
                         </SelectTrigger>
                       </FormControl>
@@ -168,7 +197,9 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
               {/* Questions Section */}
               <div className="border-t border-border pt-8">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-bold text-foreground">Questions</h3>
+                  <h3 className="text-xl font-bold text-foreground">
+                    Questions
+                  </h3>
                   <Button
                     type="button"
                     onClick={addQuestion}
@@ -185,7 +216,9 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                     <Card key={questionIndex} className="bg-muted/50">
                       <CardHeader>
                         <div className="flex justify-between items-start">
-                          <CardTitle className="text-lg">Question {questionIndex + 1}</CardTitle>
+                          <CardTitle className="text-lg">
+                            Question {questionIndex + 1}
+                          </CardTitle>
                           {form.watch("questions").length > 1 && (
                             <Button
                               type="button"
@@ -235,11 +268,16 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                                 <FormControl>
                                   <RadioGroup
                                     value={field.value.toString()}
-                                    onValueChange={(value) => field.onChange(parseInt(value))}
+                                    onValueChange={(value) =>
+                                      field.onChange(parseInt(value))
+                                    }
                                     className="space-y-3"
                                   >
                                     {[0, 1, 2, 3].map((optionIndex) => (
-                                      <div key={optionIndex} className="flex items-center gap-3">
+                                      <div
+                                        key={optionIndex}
+                                        className="flex items-center gap-3"
+                                      >
                                         <RadioGroupItem
                                           value={optionIndex.toString()}
                                           id={`q${questionIndex}-option${optionIndex}`}
@@ -283,7 +321,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                   disabled={createQuizMutation.isPending}
                   data-testid="save-quiz-button"
                 >
-                  {createQuizMutation.isPending ? "Saving..." : "Save Quiz"}
+                {createQuizMutation.isPending ? "Saving..." : "Save Quiz"}
                 </Button>
                 <Button
                   type="button"
@@ -291,7 +329,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                   onClick={() => form.reset()}
                   data-testid="reset-form-button"
                 >
-                  Reset
+                Reset
                 </Button>
               </div>
             </form>
