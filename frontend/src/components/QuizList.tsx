@@ -4,6 +4,7 @@ import  type { Quiz } from "../../shared/schema";
 import { Clock, Edit, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { sampleQuizData } from "../data/sampleData";
+import { apiRequest } from "../lib/queryClient";
 
 const categoryIcons = {
   Science: "🧪",
@@ -25,12 +26,17 @@ interface QuizListProps {
   onEdit?: (quiz: Quiz) => void;
   onDelete?: (quizId: string) => void;
   showAdminActions?: boolean;
+  setActiveTab:React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function QuizList({ onEdit, onDelete, showAdminActions = false }: QuizListProps) {
-  const { data: fetchedQuizzes, isLoading, error } = useQuery<Quiz[]>({
-    queryKey: ["/api/quizzes"],
-  }); 
+export default function QuizList({ onEdit, onDelete, showAdminActions = false, setActiveTab }: QuizListProps) {
+  const { data: fetchedQuizzes, isLoading, error } = useQuery({
+  queryKey: ["quizzes"],
+  queryFn: async () => {
+    const response = await apiRequest("GET", "/api/v1/quizzes");
+    return response.json();
+  },
+}); 
 
   const quizzes: Quiz[] = fetchedQuizzes ?? sampleQuizData;
 
@@ -73,7 +79,7 @@ export default function QuizList({ onEdit, onDelete, showAdminActions = false }:
             <p className="text-muted-foreground">Choose a quiz to test your knowledge</p>
           </div>
           {showAdminActions && (
-            <Link href="/admin">
+            <Link href="/admin" onClick={() => setActiveTab("create")}>
               <Button className="flex items-center gap-2" data-testid="create-quiz-button">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path>

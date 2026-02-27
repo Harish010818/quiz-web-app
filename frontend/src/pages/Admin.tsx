@@ -6,7 +6,7 @@ import QuizList from "../components/QuizList";
 import type { Quiz } from "../../shared/schema";
 import { apiRequest } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
-import { Button } from "../components/ui/button";
+// import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   AlertDialog, 
@@ -25,33 +25,33 @@ export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const initSampleDataMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/init-sample-data");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
-      toast({ 
-        title: "Success", 
-        description: "Sample quizzes have been added!" 
-      });
-    },
-    onError: (error: Error) => {
-      toast({ 
-        title: "Error", 
-        description: error.message || "Failed to initialize sample data",
-        variant: "destructive" 
-      });
-    },
-  });
+  // const initSampleDataMutation = useMutation({
+  //   mutationFn: async () => {
+  //     const response = await apiRequest("POST", "/api/init-sample-data");
+  //     return response.json();
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["quizzes"] });
+  //     toast({ 
+  //       title: "Success", 
+  //       description: "Sample quizzes have been added!" 
+  //     });
+  //   },
+  //   onError: (error: Error) => {
+  //     toast({ 
+  //       title: "Error", 
+  //       description: error.message || "Failed to initialize sample data",
+  //       variant: "destructive" 
+  //     });
+  //   },
+  // });
 
   const deleteQuizMutation = useMutation({
     mutationFn: async (quizId: string) => {
-      await apiRequest("DELETE", `/api/quizzes/${quizId}`);
+      await apiRequest("DELETE", `/api/v1/quizzes/${quizId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/quizzes"] });
+      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
       toast({ 
         title: "Success", 
         description: "Quiz deleted successfully!" 
@@ -68,8 +68,6 @@ export default function Admin() {
   });
 
   const handleEdit = (quiz: Quiz) => {
-    // For now, just switch to create tab
-    // In a full implementation, we'd populate the form with quiz data
     console.log(quiz);
     
     setActiveTab("create");
@@ -107,14 +105,14 @@ export default function Admin() {
                 <TabsTrigger value="manage" data-testid="manage-tab">Manage Quizzes</TabsTrigger>
               </TabsList>
               
-              <Button
+              {/* <Button
                 onClick={() => initSampleDataMutation.mutate()}
                 disabled={initSampleDataMutation.isPending}
                 variant="outline"
                 data-testid="init-sample-data"
               >
                 {initSampleDataMutation.isPending ? "Loading..." : "Load Sample Quizzes"}
-              </Button>
+              </Button> */}
             </div>
 
             <TabsContent value="create" className="space-y-6">
@@ -125,7 +123,8 @@ export default function Admin() {
               <QuizList 
                 showAdminActions={true}
                 onEdit={handleEdit}
-                onDelete={handleDelete} 
+                onDelete={handleDelete}
+                setActiveTab={setActiveTab} 
               />
             </TabsContent>
           </Tabs>

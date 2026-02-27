@@ -10,10 +10,12 @@ async function throwIfResNotOk(res: Response) {
 
 export async function apiRequest(
   method: string,
-  url: string,
+  endpoint: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+   const baseURL = import.meta.env.VITE_API_URL;
+   
+  const res = await fetch(`${baseURL}${endpoint}`, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
