@@ -1,57 +1,86 @@
 import { db } from "../db/index.js";
-import { quizzes } from "../db/schema.js";
+import { createQuizSchema, options, questions, quizzes } from "../db/schema.js";
 import { TryCatch } from "../utils/TryCatch.js";
+import type { CreateQuiz } from "../db/schema.js";
+import { eq } from "drizzle-orm";
 
 
-export const createQuiz = TryCatch(async(req, res) => {
-import { db } from "../db";
-import { quizzes, questions } from "../schema";
-import { createQuizSchema } from "../validators";
-import { TryCatch } from "../utils/TryCatch";
 
-export const createQuizController = TryCatch(async (req, res) => {
+export const createQuiz = TryCatch(async (req, res) => {
 
-  // 1️⃣ Validate
-  const parsed = createQuizSchema.parse(req.body);
+  const quizData: CreateQuiz = createQuizSchema.parse(req.body);
 
-  const { title, category, difficulty, questions: questionData } = parsed;
-
-  // 2️⃣ Insert quiz
   const [newQuiz] = await db.insert(quizzes)
-    .values({
-      title,
-      category,
-      difficulty,
+   .values({
+      title: quizData.title,
+      category: quizData.category,
+      difficulty: quizData.difficulty
     })
-    .returning(); // important
+   .returning();
 
-  // 3️⃣ Insert questions
-  const formattedQuestions = questionData.map((q) => ({
-    quizId: newQuiz.id,
-    text: q.text,
-    options: JSON.stringify(q.options), // store as JSON
-    correctOption: q.correctOption,
-  }));
+  const quiz = newQuiz!;
 
-  await db.insert(questions).values(formattedQuestions);
+  const questionsWithOptions = [];
+
+  for (const [i, questionData] of quizData.questions.entries()) {
+
+   const [newQuestion] = await db.insert(questions)
+      .values({
+        quizId: quiz.id,
+        text: questionData.text,
+        correctOption: questionData.correctOption,
+        orderIndex: i
+      })
+      .returning();
+
+    const question = newQuestion!;
+
+    const optionsData = questionData.options.map((opt, index) => ({
+      questionId: question.id,
+      text: opt,
+      orderIndex: index
+    }));
+
+    const newOptions = await db.insert(options)
+      .values(optionsData)
+      .returning();
+
+      questionsWithOptions.push({ ...question, options: newOptions});
+  }
 
   res.status(201).json({
     success: true,
-    message: "Quiz created successfully",
-    quizId: newQuiz.id,
-  });
+    data: {
+      ...quiz,
+      questions: questionsWithOptions
+   }
 
-}); 
-
+  });                     
 });
 
 
-export const getAllQuiz = TryCatch(async (req, res) => {
-   let result = await db.select().from(quizzes);
+export const deleteQuiz = TryCatch(async (req, res) => {
+   const quizId = "hello"; 
+
    
-   res.status(200).json({
-      success: true,
-      count: result.length,
-      data: result
-   });  
+
+   const deletedUser = await db
+  .delete(quizzes)
+  .where(eq(quizzes.id, quizId))
+  .returning(); 
+  
+  return res.status(201).json({
+      success: true,    
+  });
+
+})
+
+export const getAllQuiz = TryCatch(async (req, res) => {
+  let result = await db.select().from(quizzes);
+
+  res.status(200).json({
+    success: true,
+    count: result.length,
+    data: result,
+  });
 });

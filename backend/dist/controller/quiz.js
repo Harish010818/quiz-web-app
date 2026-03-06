@@ -1,36 +1,54 @@
 import { db } from "../db/index.js";
-import { quizzes } from "../db/schema.js";
+import { createQuizSchema, options, questions, quizzes } from "../db/schema.js";
 import { TryCatch } from "../utils/TryCatch.js";
+import { eq } from "drizzle-orm";
 export const createQuiz = TryCatch(async (req, res) => {
-    import { db } from "../db";
-    import { quizzes, questions } from "../schema";
-    import { createQuizSchema } from "../validators";
-    import { TryCatch } from "../utils/TryCatch";
-    export const createQuizController = TryCatch(async (req, res) => {
-        // 1️⃣ Validate
-        const parsed = createQuizSchema.parse(req.body);
-        const { title, category, difficulty, questions: questionData } = parsed;
-        // 2️⃣ Insert quiz
-        const [newQuiz] = await db.insert(quizzes)
+    const quizData = createQuizSchema.parse(req.body);
+    const [newQuiz] = await db.insert(quizzes)
+        .values({
+        title: quizData.title,
+        category: quizData.category,
+        difficulty: quizData.difficulty
+    })
+        .returning();
+    const quiz = newQuiz;
+    const questionsWithOptions = [];
+    for (const [i, questionData] of quizData.questions.entries()) {
+        const [newQuestion] = await db.insert(questions)
             .values({
-            title,
-            category,
-            difficulty,
+            quizId: quiz.id,
+            text: questionData.text,
+            correctOption: questionData.correctOption,
+            orderIndex: i
         })
-            .returning(); // important
-        // 3️⃣ Insert questions
-        const formattedQuestions = questionData.map((q) => ({
-            quizId: newQuiz.id,
-            text: q.text,
-            options: JSON.stringify(q.options), // store as JSON
-            correctOption: q.correctOption,
+            .returning();
+        const question = newQuestion;
+        const optionsData = questionData.options.map((opt, index) => ({
+            questionId: question.id,
+            text: opt,
+            orderIndex: index
         }));
-        await db.insert(questions).values(formattedQuestions);
-        res.status(201).json({
-            success: true,
-            message: "Quiz created successfully",
-            quizId: newQuiz.id,
-        });
+        const newOptions = await db.insert(options)
+            .values(optionsData)
+            .returning();
+        questionsWithOptions.push({ ...question, options: newOptions });
+    }
+    res.status(201).json({
+        success: true,
+        data: {
+            ...quiz,
+            questions: questionsWithOptions
+        }
+    });
+});
+export const deleteQuiz = TryCatch(async (req, res) => {
+    const quizId = "hello";
+    const deletedUser = await db
+        .delete(quizzes)
+        .where(eq(quizzes.id, quizId))
+        .returning();
+    return res.status(201).json({
+        success: true,
     });
 });
 export const getAllQuiz = TryCatch(async (req, res) => {
@@ -38,7 +56,7 @@ export const getAllQuiz = TryCatch(async (req, res) => {
     res.status(200).json({
         success: true,
         count: result.length,
-        data: result
+        data: result,
     });
 });
 //# sourceMappingURL=quiz.js.map
