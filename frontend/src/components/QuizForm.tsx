@@ -41,7 +41,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
 
   const createQuizMutation = useMutation({
     mutationFn: async (data: CreateQuiz) => {
-      console.log("data", data);
+      
       const response = await apiRequest("POST", "/api/v1/quiz/create-quiz", data);
       return response.json();
     },

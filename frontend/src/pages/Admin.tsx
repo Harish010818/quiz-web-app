@@ -48,7 +48,7 @@ export default function Admin() {
 
   const deleteQuizMutation = useMutation({
     mutationFn: async (quizId: string) => {
-      await apiRequest("DELETE", `/api/v1/quizzes/${quizId}`);
+      await apiRequest("DELETE", `/api/v1/quiz/delete-quiz/${quizId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });

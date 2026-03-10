@@ -1,7 +1,8 @@
 import express from "express";
-import { createQuiz, getAllQuiz } from "../controller/quiz.js";
+import { createQuiz, deleteQuiz, getAllQuiz } from "../controller/quiz.js";
 const quizRouter = express.Router();
-quizRouter.post("/create-quiz", createQuiz);
 quizRouter.get("/quizzes", getAllQuiz);
+quizRouter.post("/create-quiz", createQuiz);
+quizRouter.delete("/delete-quiz/:id", deleteQuiz);
 export default quizRouter;
 //# sourceMappingURL=quizRoute.js.map

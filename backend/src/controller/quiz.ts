@@ -4,32 +4,30 @@ import { TryCatch } from "../utils/TryCatch.js";
 import type { CreateQuiz } from "../db/schema.js";
 import { eq } from "drizzle-orm";
 
-
-
 export const createQuiz = TryCatch(async (req, res) => {
-
   const quizData: CreateQuiz = createQuizSchema.parse(req.body);
 
-  const [newQuiz] = await db.insert(quizzes)
-   .values({
+  const [newQuiz] = await db
+    .insert(quizzes)
+    .values({
       title: quizData.title,
       category: quizData.category,
-      difficulty: quizData.difficulty
+      difficulty: quizData.difficulty,
     })
-   .returning();
+    .returning();
 
   const quiz = newQuiz!;
 
   const questionsWithOptions = [];
 
   for (const [i, questionData] of quizData.questions.entries()) {
-
-   const [newQuestion] = await db.insert(questions)
+    const [newQuestion] = await db
+      .insert(questions)
       .values({
         quizId: quiz.id,
         text: questionData.text,
         correctOption: questionData.correctOption,
-        orderIndex: i
+        orderIndex: i,
       })
       .returning();
 
@@ -38,42 +36,34 @@ export const createQuiz = TryCatch(async (req, res) => {
     const optionsData = questionData.options.map((opt, index) => ({
       questionId: question.id,
       text: opt,
-      orderIndex: index
+      orderIndex: index,
     }));
 
-    const newOptions = await db.insert(options)
-      .values(optionsData)
-      .returning();
+    const newOptions = await db.insert(options).values(optionsData).returning();
 
-      questionsWithOptions.push({ ...question, options: newOptions});
+    questionsWithOptions.push({ ...question, options: newOptions });
   }
 
   res.status(201).json({
     success: true,
     data: {
       ...quiz,
-      questions: questionsWithOptions
-   }
-
-  });                     
+      questions: questionsWithOptions,
+    },
+  });
 });
 
-
 export const deleteQuiz = TryCatch(async (req, res) => {
-   const quizId = "hello"; 
+  console.log("something is cooking.. inside delete...")
+  const quizId = req.params.id as string ;
 
-   
+  await db.delete(quizzes).where(eq(quizzes.id, quizId));
 
-   const deletedUser = await db
-  .delete(quizzes)
-  .where(eq(quizzes.id, quizId))
-  .returning(); 
-  
-  return res.status(201).json({
-      success: true,    
+  res.status(200).json({
+    success: true,
+    message: "Quiz deleted successfully..."
   });
-
-})
+});
 
 export const getAllQuiz = TryCatch(async (req, res) => {
   let result = await db.select().from(quizzes);
@@ -83,4 +73,5 @@ export const getAllQuiz = TryCatch(async (req, res) => {
     count: result.length,
     data: result,
   });
+
 });
