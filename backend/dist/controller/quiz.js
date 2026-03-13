@@ -2,6 +2,7 @@ import { db } from "../db/index.js";
 import { createQuizSchema, options, questions, quizzes } from "../db/schema.js";
 import { TryCatch } from "../utils/TryCatch.js";
 import { eq } from "drizzle-orm";
+import { success } from "zod";
 export const createQuiz = TryCatch(async (req, res) => {
     const quizData = createQuizSchema.parse(req.body);
     const [newQuiz] = await db
@@ -42,12 +43,17 @@ export const createQuiz = TryCatch(async (req, res) => {
     });
 });
 export const deleteQuiz = TryCatch(async (req, res) => {
-    console.log("something is cooking.. inside delete...");
     const quizId = req.params.id;
     await db.delete(quizzes).where(eq(quizzes.id, quizId));
     res.status(200).json({
         success: true,
         message: "Quiz deleted successfully..."
+    });
+});
+export const editQuiz = TryCatch(async (req, res) => {
+    const quizId = req.params.id;
+    res.status(200).json({
+        success: true
     });
 });
 export const getAllQuiz = TryCatch(async (req, res) => {

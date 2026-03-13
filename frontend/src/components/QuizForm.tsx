@@ -1,8 +1,8 @@
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreateQuiz } from "../../shared/schema";
-import  { createQuizSchema }  from "../../shared/schema";
+import { createQuizSchema } from "../../shared/schema";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -27,21 +27,26 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
     resolver: zodResolver(createQuizSchema),
     defaultValues: {
       title: "",
-      category: "Science",
-      difficulty: "medium",
+      category: "",
+      difficulty: "easy",
       questions: [
         {
           text: "",
-          options: ["", "", ""],
+          options: ["", "", "", ""],
           correctOption: 0,
         }
       ],
     },
   });
 
+  // ✅ CHANGED: useFieldArray replaces manual getValue/setValue logic
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "questions",
+  });
+
   const createQuizMutation = useMutation({
     mutationFn: async (data: CreateQuiz) => {
-      
       const response = await apiRequest("POST", "/api/v1/quiz/create-quiz", data);
       return response.json();
     },
@@ -60,22 +65,20 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
     },
   });
 
+  // ✅ CHANGED: uses append() instead of form.setValue()
   const addQuestion = () => {
-    const currentQuestions = form.getValues("questions");
-    form.setValue("questions", [
-      ...currentQuestions,
-      {
-        text: "",
-        options: ["", "", "", ""],
-        correctOption: 0,
-      }
-    ]);
+    console.log(form.getValues("questions"));
+    append({
+      text: "",
+      options: ["", "", "", ""],
+      correctOption: 0,
+    });
   };
 
+  // ✅ CHANGED: uses remove() instead of form.setValue() with filter
   const removeQuestion = (index: number) => {
-    const currentQuestions = form.getValues("questions");
-    if (currentQuestions.length > 1) {
-      form.setValue("questions", currentQuestions.filter((_, i) => i !== index));
+    if (fields.length > 1) {
+      remove(index);
     }
   };
 
@@ -94,6 +97,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
         <CardHeader>
           <CardTitle>Quiz Details</CardTitle>
         </CardHeader>
+
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -182,12 +186,14 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                 </div>
 
                 <div className="space-y-8">
-                  {form.watch("questions").map((_, questionIndex) => (
-                    <Card key={questionIndex} className="bg-muted/50">
+                  {/* ✅ CHANGED: fields.map() instead of form.watch("questions").map() */}
+                  {/* ✅ CHANGED: key={field.id} instead of key={questionIndex} */}                     
+                  {fields.map((field, questionIndex) => (
+                    <Card key={field.id} className="bg-muted/50">
                       <CardHeader>
                         <div className="flex justify-between items-start">
                           <CardTitle className="text-lg">Question {questionIndex + 1}</CardTitle>
-                          {form.watch("questions").length > 1 && (
+                          {fields.length > 1 && (
                             <Button
                               type="button"
                               variant="ghost"

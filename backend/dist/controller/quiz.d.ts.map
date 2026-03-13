@@ -1,1 +1,1 @@
-{"version":3,"file":"quiz.d.ts","sourceRoot":"","sources":["../../src/controller/quiz.ts"],"names":[],"mappings":"AAMA,eAAO,MAAM,UAAU,8IA+CrB,CAAC;AAEH,eAAO,MAAM,UAAU,8IAUrB,CAAC;AAEH,eAAO,MAAM,UAAU,8IASrB,CAAC"}
+{"version":3,"file":"quiz.d.ts","sourceRoot":"","sources":["../../src/controller/quiz.ts"],"names":[],"mappings":"AAOA,eAAO,MAAM,UAAU,8IA+CrB,CAAC;AAEH,eAAO,MAAM,UAAU,8IASrB,CAAC;AAGH,eAAO,MAAM,QAAQ,8IAMnB,CAAA;AAEF,eAAO,MAAM,UAAU,8IASrB,CAAC"}

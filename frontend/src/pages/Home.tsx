@@ -39,7 +39,7 @@ export default function Home() {
               </motion.div>
               
               <motion.h1 
-                className="text-5xl md:text-7xl font-bold gradient-text leading-tight"
+                className="text-5xl md:text-7xl font-bold text-foreground leading-tight"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.8 }}

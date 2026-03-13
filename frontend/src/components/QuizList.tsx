@@ -26,7 +26,7 @@ interface QuizListProps {
   onEdit?: (quiz: Quiz) => void;
   onDelete?: (quizId: string) => void;
   showAdminActions?: boolean;
-  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function QuizList({
@@ -105,7 +105,7 @@ export default function QuizList({
             </p>
           </div>
           {showAdminActions && (
-            <Link href="/admin" onClick={() => setActiveTab("create")}>
+            <Link href="/admin" onClick={() => setActiveTab?.("create")}>
               <Button
                 className="flex items-center gap-2"
                 data-testid="create-quiz-button"

@@ -3,6 +3,7 @@ import { createQuizSchema, options, questions, quizzes } from "../db/schema.js";
 import { TryCatch } from "../utils/TryCatch.js";
 import type { CreateQuiz } from "../db/schema.js";
 import { eq } from "drizzle-orm";
+import { success } from "zod";
 
 export const createQuiz = TryCatch(async (req, res) => {
   const quizData: CreateQuiz = createQuizSchema.parse(req.body);
@@ -54,7 +55,6 @@ export const createQuiz = TryCatch(async (req, res) => {
 });
 
 export const deleteQuiz = TryCatch(async (req, res) => {
-  console.log("something is cooking.. inside delete...")
   const quizId = req.params.id as string ;
 
   await db.delete(quizzes).where(eq(quizzes.id, quizId));
@@ -64,6 +64,15 @@ export const deleteQuiz = TryCatch(async (req, res) => {
     message: "Quiz deleted successfully..."
   });
 });
+
+
+export const editQuiz = TryCatch(async(req, res) => {
+  const quizId = req.params.id as string;
+
+  res.status(200).json({
+     success: true
+  });
+})
 
 export const getAllQuiz = TryCatch(async (req, res) => {
   let result = await db.select().from(quizzes);
