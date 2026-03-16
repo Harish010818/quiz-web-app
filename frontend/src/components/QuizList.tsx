@@ -29,12 +29,7 @@ interface QuizListProps {
   setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function QuizList({
-  onEdit,
-  onDelete,
-  showAdminActions = false,
-  setActiveTab,
-}: QuizListProps) {
+export default function QuizList({onEdit, onDelete, showAdminActions = false, setActiveTab,}: QuizListProps) {
   const {
     data: fetchedQuizzes,
     isLoading,
@@ -54,8 +49,10 @@ export default function QuizList({
   if (!fetchedQuizzes || fetchedQuizzes?.data.length == 0) {
     quizzes = sampleQuizData;
   } else {
+    // console.log(fetchedQuizzes?.data);
     quizzes = fetchedQuizzes.data;
   }
+
 
   if (isLoading) {
     return (
@@ -203,7 +200,7 @@ export default function QuizList({
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onDelete?.(quiz.id)}
+                      onClick={() => onDelete?.(quiz.id)} 
                       className="hover:bg-destructive/10 hover:border-destructive"
                       aria-label="Delete quiz"
                       data-testid={`delete-quiz-${quiz.id}`}

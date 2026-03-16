@@ -1,8 +1,6 @@
-import { useForm, useFieldArray } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useFieldArray } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CreateQuiz } from "../../shared/schema";
-import { createQuizSchema } from "../../shared/schema";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -14,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Plus, Trash2 } from "lucide-react";
 import { apiRequest } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
+import { useFormContext } from "../contexts/formContext";
 
 interface QuizFormProps {
   onSuccess?: () => void;
@@ -22,22 +21,7 @@ interface QuizFormProps {
 export default function QuizForm({ onSuccess }: QuizFormProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
-  const form = useForm<CreateQuiz>({
-    resolver: zodResolver(createQuizSchema),
-    defaultValues: {
-      title: "",
-      category: "",
-      difficulty: "easy",
-      questions: [
-        {
-          text: "",
-          options: ["", "", "", ""],
-          correctOption: 0,
-        }
-      ],
-    },
-  });
+  const { form } = useFormContext();
 
   // ✅ CHANGED: useFieldArray replaces manual getValue/setValue logic
   const { fields, append, remove } = useFieldArray({
@@ -67,18 +51,17 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
 
   // ✅ CHANGED: uses append() instead of form.setValue()
   const addQuestion = () => {
-    console.log(form.getValues("questions"));
     append({
       text: "",
       options: ["", "", "", ""],
       correctOption: 0,
     });
   };
-
+   
   // ✅ CHANGED: uses remove() instead of form.setValue() with filter
   const removeQuestion = (index: number) => {
     if (fields.length > 1) {
-      remove(index);
+         remove(index);
     }
   };
 
@@ -131,7 +114,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                         <FormControl>
                           <SelectTrigger data-testid="quiz-category-select">
                             <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
+                          </SelectTrigger>                                  
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="Science">Science</SelectItem>
@@ -149,7 +132,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
 
               <FormField
                 control={form.control}
-                name="difficulty"
+                name="difficulty"      
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Difficulty</FormLabel>
@@ -182,7 +165,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                   >
                     <Plus className="w-5 h-5" />
                     Add Question
-                  </Button>
+                  </Button>                                                      
                 </div>
 
                 <div className="space-y-8">
@@ -200,7 +183,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                               size="sm"
                               onClick={() => removeQuestion(questionIndex)}
                               className="text-destructive hover:bg-destructive/10"
-                              data-testid={`remove-question-${questionIndex}`}
+                              data-testid={`remove-question-${questionIndex}`}    
                             >
                               <Trash2 className="w-5 h-5" />
                             </Button>
@@ -218,12 +201,12 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                                 <Textarea
                                   placeholder="Enter your question..."
                                   className="resize-none"
-                                  rows={2}
+                                  rows={1}
                                   {...field}
                                   data-testid={`question-text-${questionIndex}`}
                                 />
                               </FormControl>
-                              <FormMessage />
+                              <FormMessage />  
                             </FormItem>
                           )}
                         />
@@ -264,7 +247,7 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                                                   data-testid={`question-${questionIndex}-option-${optionIndex}`}
                                                 />
                                               </FormControl>
-                                            </FormItem>
+                                          </FormItem>
                                           )}
                                         />
                                       </div>

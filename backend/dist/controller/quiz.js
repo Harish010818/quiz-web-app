@@ -2,7 +2,6 @@ import { db } from "../db/index.js";
 import { createQuizSchema, options, questions, quizzes } from "../db/schema.js";
 import { TryCatch } from "../utils/TryCatch.js";
 import { eq } from "drizzle-orm";
-import { success } from "zod";
 export const createQuiz = TryCatch(async (req, res) => {
     const quizData = createQuizSchema.parse(req.body);
     const [newQuiz] = await db
@@ -57,7 +56,35 @@ export const editQuiz = TryCatch(async (req, res) => {
     });
 });
 export const getAllQuiz = TryCatch(async (req, res) => {
-    let result = await db.select().from(quizzes);
+    const allQuizzes = await db.select().from(quizzes);
+    const result = [];
+    for (const quiz of allQuizzes) {
+        const questionResult = [];
+        const allQuestions = await db
+            .select()
+            .from(questions)
+            .where(eq(questions.quizId, quiz.id))
+            .orderBy(questions.orderIndex); // ✅ use orderIndex from your schema
+        for (const question of allQuestions) {
+            const allOptions = await db
+                .select()
+                .from(options)
+                .where(eq(options.questionId, question.id))
+                .orderBy(options.orderIndex); // ✅ use orderIndex from your schema
+            questionResult.push({
+                text: question.text, // ✅ maps to text col
+                options: allOptions.map(o => o.text), // ✅ string[] sorted by orderIndex
+                correctOption: question.correctOption, // ✅ maps to correct_option col
+            });
+        }
+        result.push({
+            id: quiz.id,
+            title: quiz.title,
+            category: quiz.category,
+            difficulty: quiz.difficulty,
+            questions: questionResult,
+        });
+    }
     res.status(200).json({
         success: true,
         count: result.length,

@@ -69,8 +69,8 @@ export default function Admin() {
 
   const handleEdit = (quiz: Quiz) => {
     console.log(quiz);
-    
-    setActiveTab("create");
+    // setActiveTab("create");
+      
     toast({ 
       title: "Edit Quiz", 
       description: "Quiz editing is not yet implemented. Please create a new quiz instead.",
