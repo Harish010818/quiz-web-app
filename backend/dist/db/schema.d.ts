@@ -140,8 +140,8 @@ export declare const quizzes: import("drizzle-orm/pg-core").PgTableWithColumns<{
             columnType: "PgText";
             data: string;
             driverParam: string;
-            notNull: false;
-            hasDefault: true;
+            notNull: true;
+            hasDefault: false;
             isPrimaryKey: false;
             isAutoincrement: false;
             hasRuntimeDefault: false;
@@ -533,7 +533,7 @@ export declare const insertUserSchema: z.ZodObject<{
 export declare const insertQuizSchema: z.ZodObject<{
     title: z.ZodString;
     category: z.ZodString;
-    difficulty: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    difficulty: z.ZodString;
 }, {
     out: {};
     in: {};
@@ -571,11 +571,7 @@ export declare const createQuizSchema: z.ZodObject<{
     id: z.ZodOptional<z.ZodString>;
     title: z.ZodString;
     category: z.ZodString;
-    difficulty: z.ZodEnum<{
-        medium: "medium";
-        easy: "easy";
-        hard: "hard";
-    }>;
+    difficulty: z.ZodString;
     questions: z.ZodArray<z.ZodObject<{
         text: z.ZodString;
         options: z.ZodArray<z.ZodString>;

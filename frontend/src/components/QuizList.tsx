@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import type { Quiz } from "../../shared/schema";
+import type { CreateQuiz } from "../../shared/schema";
 import { Clock, Edit, Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { sampleQuizData } from "../data/sampleData";
 import { apiRequest } from "../lib/queryClient";
+import { sampleQuizQus } from "../data/sampleDataWithQus";
 
 const categoryIcons = {
   Science: "🧪",
@@ -23,7 +23,7 @@ const categoryColors = {
 };
 
 interface QuizListProps {
-  onEdit?: (quiz: Quiz) => void;
+  onEdit?: (quiz: CreateQuiz) => void;
   onDelete?: (quizId: string) => void;
   showAdminActions?: boolean;
   setActiveTab?: React.Dispatch<React.SetStateAction<string>>;
@@ -44,12 +44,13 @@ export default function QuizList({onEdit, onDelete, showAdminActions = false, se
 
   console.log(fetchedQuizzes?.data);
 
-  let quizzes: Quiz[];
+  let quizzes: CreateQuiz[];
 
   if (!fetchedQuizzes || fetchedQuizzes?.data.length == 0) {
-    quizzes = sampleQuizData;
+    quizzes = sampleQuizQus;
   } else {
-    // console.log(fetchedQuizzes?.data);
+    //console.log(fetchedQuizzes?.data);
+
     quizzes = fetchedQuizzes.data;
   }
 
@@ -200,7 +201,7 @@ export default function QuizList({onEdit, onDelete, showAdminActions = false, se
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onDelete?.(quiz.id)} 
+                      onClick={() => onDelete?.(quiz.id!)} 
                       className="hover:bg-destructive/10 hover:border-destructive"
                       aria-label="Delete quiz"
                       data-testid={`delete-quiz-${quiz.id}`}

@@ -61,12 +61,13 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
   // ✅ CHANGED: uses remove() instead of form.setValue() with filter
   const removeQuestion = (index: number) => {
     if (fields.length > 1) {
-         remove(index);
+        remove(index);
     }
   };
 
   const onSubmit = (data: CreateQuiz) => {
-    createQuizMutation.mutate(data);
+    console.log(data);
+    //createQuizMutation.mutate(data);
   };
 
   return (

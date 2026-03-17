@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createQuizSchema, type CreateQuiz } from "../../shared/schema";
 import { useForm, type UseFormReturn } from "react-hook-form";
 
-// ✅ Correct context type
+// context type
 const FormContext = createContext<{ form: UseFormReturn<CreateQuiz> } | null>(null);
 
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
@@ -12,7 +12,7 @@ export const FormProvider = ({ children }: { children: React.ReactNode }) => {
     defaultValues: {
       title: "",
       category: "",
-      difficulty: "easy",
+      difficulty: "",
       questions: [{ 
         text: "", 
         options: ["", "", "", ""], 

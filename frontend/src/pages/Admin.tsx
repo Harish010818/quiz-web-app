@@ -3,9 +3,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import QuizForm from "../components/QuizForm";
 import QuizList from "../components/QuizList";
-import type { Quiz } from "../../shared/schema";
+import type {CreateQuiz, QuizWithQuestions } from "../../shared/schema";
 import { apiRequest } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
+import { useFormContext } from "../contexts/formContext"; 
 // import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
@@ -24,6 +25,8 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState("create");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { form }  = useFormContext();
+  const { reset } = form;
 
   // const initSampleDataMutation = useMutation({
   //   mutationFn: async () => {
@@ -67,14 +70,22 @@ export default function Admin() {
     },
   });
 
-  const handleEdit = (quiz: Quiz) => {
+  const handleEdit = (quiz: CreateQuiz) => {
     console.log(quiz);
-    // setActiveTab("create");
-      
+    
+    form.setValue("id", quiz.id);
+    form.setValue("title", quiz.title);
+    form.setValue("category", quiz.category);
+    form.setValue("difficulty", quiz.difficulty);
+    form.setValue("questions", quiz.questions);
+
+    setActiveTab("create");
+
     toast({ 
       title: "Edit Quiz", 
-      description: "Quiz editing is not yet implemented. Please create a new quiz instead.",
+      description: "Now you can edit your quiz and save it.",
     });
+
   };
 
   const handleDelete = (quizId: string) => {

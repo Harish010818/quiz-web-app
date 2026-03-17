@@ -12,7 +12,7 @@ export const quizzes = pgTable("quizzes", {
     id: varchar("id").primaryKey().default(sql `gen_random_uuid()`),
     title: text("title").notNull(),
     category: text("category").notNull(),
-    difficulty: text("difficulty").default("medium"),
+    difficulty: text("difficulty").notNull(),
     createdAt: timestamp("created_at").defaultNow(),
 });
 export const questions = pgTable("questions", {
@@ -87,7 +87,7 @@ export const createQuizSchema = z.object({
     id: z.string().optional(),
     title: z.string().min(1, "Title is required"),
     category: z.string().min(1, "Category is required"),
-    difficulty: z.enum(["easy", "medium", "hard"]),
+    difficulty: z.string().min(1, "Difficulty is required"),
     questions: z.array(z.object({
         text: z.string().min(1, "Question text is required"),
         options: z.array(z.string().min(1, "Option text is required")).length(4, "Must have exactly 4 options"),
