@@ -50,9 +50,57 @@ export const deleteQuiz = TryCatch(async (req, res) => {
     });
 });
 export const editQuiz = TryCatch(async (req, res) => {
-    const quizId = req.params.id;
+    const quizId = req.params.id; // quiz id from URL
+    const quizData = createQuizSchema.parse(req.body);
+    // 1. Check quiz exists
+    const [existingQuiz] = await db
+        .select()
+        .from(quizzes)
+        .where(eq(quizzes.id, quizId));
+    if (!existingQuiz) {
+        return res.status(404).json({ success: false, message: "Quiz not found" });
+    }
+    // 2. Update quiz main details
+    const [updatedQuiz] = await db
+        .update(quizzes)
+        .set({
+        title: quizData.title,
+        category: quizData.category,
+        difficulty: quizData.difficulty,
+    })
+        .where(eq(quizzes.id, quizId))
+        .returning(); // update not insert
+    // 3. Delete old questions (cascade will auto delete their options too)
+    await db
+        .delete(questions)
+        .where(eq(questions.quizId, quizId)); // cascade handles options
+    // 4. Re-insert fresh questions + options (same as createQuiz)
+    const questionsWithOptions = [];
+    for (const [i, questionData] of quizData.questions.entries()) {
+        const [newQuestion] = await db
+            .insert(questions)
+            .values({
+            quizId: quizId, // ✅ existing quiz id not new
+            text: questionData.text,
+            correctOption: questionData.correctOption,
+            orderIndex: i,
+        })
+            .returning();
+        const question = newQuestion;
+        const optionsData = questionData.options.map((opt, index) => ({
+            questionId: question.id,
+            text: opt,
+            orderIndex: index,
+        }));
+        const newOptions = await db.insert(options).values(optionsData).returning();
+        questionsWithOptions.push({ ...question, options: newOptions });
+    }
     res.status(200).json({
-        success: true
+        success: true,
+        data: {
+            ...updatedQuiz,
+            questions: questionsWithOptions,
+        },
     });
 });
 export const getAllQuiz = TryCatch(async (req, res) => {

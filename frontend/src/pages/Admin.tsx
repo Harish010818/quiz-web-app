@@ -3,11 +3,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Navbar from "../components/Navbar";
 import QuizForm from "../components/QuizForm";
 import QuizList from "../components/QuizList";
-import type {CreateQuiz, QuizWithQuestions } from "../../shared/schema";
+import type { CreateQuiz } from "../../shared/schema";
 import { apiRequest } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
 import { useFormContext } from "../contexts/formContext"; 
-// import { Button } from "../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   AlertDialog, 
@@ -26,28 +25,6 @@ export default function Admin() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { form }  = useFormContext();
-  const { reset } = form;
-
-  // const initSampleDataMutation = useMutation({
-  //   mutationFn: async () => {
-  //     const response = await apiRequest("POST", "/api/init-sample-data");
-  //     return response.json();
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["quizzes"] });
-  //     toast({ 
-  //       title: "Success", 
-  //       description: "Sample quizzes have been added!" 
-  //     });
-  //   },
-  //   onError: (error: Error) => {
-  //     toast({ 
-  //       title: "Error", 
-  //       description: error.message || "Failed to initialize sample data",
-  //       variant: "destructive" 
-  //     });
-  //   },
-  // });
 
   const deleteQuizMutation = useMutation({
     mutationFn: async (quizId: string) => {
@@ -72,7 +49,7 @@ export default function Admin() {
 
   const handleEdit = (quiz: CreateQuiz) => {
     console.log(quiz);
-    
+
     form.setValue("id", quiz.id);
     form.setValue("title", quiz.title);
     form.setValue("category", quiz.category);

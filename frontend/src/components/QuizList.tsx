@@ -49,8 +49,6 @@ export default function QuizList({onEdit, onDelete, showAdminActions = false, se
   if (!fetchedQuizzes || fetchedQuizzes?.data.length == 0) {
     quizzes = sampleQuizQus;
   } else {
-    //console.log(fetchedQuizzes?.data);
-
     quizzes = fetchedQuizzes.data;
   }
 

@@ -49,6 +49,27 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
     },
   });
 
+  
+  const updateQuizMutation = useMutation({
+    mutationFn: async (data: CreateQuiz) => {
+      const response = await apiRequest("PUT", `/api/v1/quiz/edit-quiz/${data.id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["quizzes"] });
+      toast({ title: "Success", description: "Quiz updated successfully!" });
+      form.reset();
+      onSuccess?.();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update quiz",
+        variant: "destructive"
+      });
+    },
+  });
+
   // ✅ CHANGED: uses append() instead of form.setValue()
   const addQuestion = () => {
     append({
@@ -67,7 +88,12 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
 
   const onSubmit = (data: CreateQuiz) => {
     console.log(data);
-    //createQuizMutation.mutate(data);
+
+    if(data.id){
+      updateQuizMutation.mutate(data);
+    } else {
+      createQuizMutation.mutate(data);
+    }
   };
 
   return (
@@ -271,10 +297,10 @@ export default function QuizForm({ onSuccess }: QuizFormProps) {
                 <Button
                   type="submit"
                   className="flex-1"
-                  disabled={createQuizMutation.isPending}
+                  disabled={createQuizMutation.isPending || updateQuizMutation.isPending}
                   data-testid="save-quiz-button"
                 >
-                  {createQuizMutation.isPending ? "Saving..." : "Save Quiz"}
+                  {createQuizMutation.isPending || updateQuizMutation.isPending ? "Saving..." : "Save Quiz"}
                 </Button>
                 <Button
                   type="button"
