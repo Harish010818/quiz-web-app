@@ -39,6 +39,23 @@ export declare const users: import("drizzle-orm/pg-core").PgTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
+        email: import("drizzle-orm/pg-core").PgColumn<{
+            name: "email";
+            tableName: "users";
+            dataType: "string";
+            columnType: "PgText";
+            data: string;
+            driverParam: string;
+            notNull: true;
+            hasDefault: false;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
         password: import("drizzle-orm/pg-core").PgColumn<{
             name: "password";
             tableName: "users";
@@ -52,6 +69,23 @@ export declare const users: import("drizzle-orm/pg-core").PgTableWithColumns<{
             isAutoincrement: false;
             hasRuntimeDefault: false;
             enumValues: [string, ...string[]];
+            baseColumn: never;
+            identity: undefined;
+            generated: undefined;
+        }, {}, {}>;
+        role: import("drizzle-orm/pg-core").PgColumn<{
+            name: "role";
+            tableName: "users";
+            dataType: "string";
+            columnType: "PgText";
+            data: "user" | "admin";
+            driverParam: string;
+            notNull: true;
+            hasDefault: true;
+            isPrimaryKey: false;
+            isAutoincrement: false;
+            hasRuntimeDefault: false;
+            enumValues: ["user", "admin"];
             baseColumn: never;
             identity: undefined;
             generated: undefined;
@@ -525,7 +559,12 @@ export declare const attemptsRelations: import("drizzle-orm").Relations<"attempt
 }>;
 export declare const insertUserSchema: z.ZodObject<{
     username: z.ZodString;
+    email: z.ZodString;
     password: z.ZodString;
+    role: z.ZodOptional<z.ZodEnum<{
+        user: "user";
+        admin: "admin";
+    }>>;
 }, {
     out: {};
     in: {};

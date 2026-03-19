@@ -5,7 +5,9 @@ import { z } from "zod";
 export const users = pgTable("users", {
     id: varchar("id").primaryKey().default(sql `gen_random_uuid()`),
     username: text("username").notNull().unique(),
+    email: text("email").notNull().unique(),
     password: text("password").notNull(),
+    role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
     createdAt: timestamp("created_at").defaultNow(),
 });
 export const quizzes = pgTable("quizzes", {
@@ -13,20 +15,20 @@ export const quizzes = pgTable("quizzes", {
     title: text("title").notNull(),
     category: text("category").notNull(),
     difficulty: text("difficulty").notNull(),
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow()
 });
 export const questions = pgTable("questions", {
     id: varchar("id").primaryKey().default(sql `gen_random_uuid()`),
     quizId: varchar("quiz_id").references(() => quizzes.id, { onDelete: "cascade" }).notNull(),
     text: text("text").notNull(),
     correctOption: integer("correct_option").notNull(), // 0-3 for options A-D
-    orderIndex: integer("order_index").notNull(),
+    orderIndex: integer("order_index").notNull()
 });
 export const options = pgTable("options", {
     id: varchar("id").primaryKey().default(sql `gen_random_uuid()`),
     questionId: varchar("question_id").references(() => questions.id, { onDelete: "cascade" }).notNull(),
     text: text("text").notNull(),
-    orderIndex: integer("order_index").notNull(), // 0-3 for A-D
+    orderIndex: integer("order_index").notNull() // 0-3 for A-D
 });
 export const attempts = pgTable("attempts", {
     id: varchar("id").primaryKey().default(sql `gen_random_uuid()`),
@@ -37,7 +39,7 @@ export const attempts = pgTable("attempts", {
     correctAnswers: integer("correct_answers").notNull(),
     timeSpent: integer("time_spent"), // in seconds
     answers: jsonb("answers").notNull(), // array of {questionId, selectedOption, isCorrect}
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at").defaultNow()
 });
 // Relations
 export const quizzesRelations = relations(quizzes, ({ many }) => ({

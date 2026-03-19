@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./db/index.js";
 import cors from "cors";
 import  quizRouter  from "./routes/quizRoute.js";
+import userRouter from "./routes/userRoute.js";
 
 dotenv.config();
 connectDB();
@@ -14,6 +15,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors({origin: process.env.FRONTEND_URL, credentials: true}));
 
 app.use("/api/v1/quiz", quizRouter);
+app.use("/api/v1/user", userRouter);
 
 const PORT = process.env.PORT || 3000;
 
