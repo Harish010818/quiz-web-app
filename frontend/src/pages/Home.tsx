@@ -142,7 +142,7 @@ export default function Home() {
                 <li><Link href="/" className="hover:text-primary transition-colors">Home</Link></li>
                 <li><a href="#quizzes" className="hover:text-primary transition-colors">Quizzes</a></li>
                 <li><a href="#leaderboard" className="hover:text-primary transition-colors">Leaderboard</a></li>
-                <li><Link href="/admin" className="hover:text-primary transition-colors">Admin</Link></li>
+                <li><Link href="/my-quizzes" className="hover:text-primary transition-colors">My quizzes</Link></li>
               </ul>
             </div>
             

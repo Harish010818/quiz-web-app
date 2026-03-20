@@ -8,7 +8,6 @@ import { eq } from "drizzle-orm";
 export const register = TryCatch(async (req, res) => {
   const { username, email, password } = req.body;
 
-  // 1. Validate required fields
   if (!username || !email || !password) {
     return res.status(400).json({
       success: false,
@@ -16,7 +15,6 @@ export const register = TryCatch(async (req, res) => {
     });
   }
 
-  // 2. Check if user already exists
   const [existingUser] = await db
     .select()
     .from(users)
@@ -29,10 +27,8 @@ export const register = TryCatch(async (req, res) => {
     });
   }
 
-  // 3. Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // 4. Create user
   const [newUser] = await db
     .insert(users)
     .values({
@@ -42,7 +38,6 @@ export const register = TryCatch(async (req, res) => {
     })
     .returning();
 
-  // 5. Generate JWT
   const token = jwt.sign(
     { id: newUser!.id },
     process.env.JWT_SECRET!,
@@ -65,7 +60,6 @@ export const register = TryCatch(async (req, res) => {
 export const login = TryCatch(async (req, res) => {
   const { email, password } = req.body;
 
-  // 1. Validate required fields
   if (!email || !password) {
     return res.status(400).json({
       success: false,
@@ -73,7 +67,6 @@ export const login = TryCatch(async (req, res) => {
     });
   }
 
-  // 2. Find user
   const [user] = await db
     .select()
     .from(users)
@@ -86,7 +79,6 @@ export const login = TryCatch(async (req, res) => {
     });
   }
 
-  // 3. Compare password
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {
@@ -96,7 +88,6 @@ export const login = TryCatch(async (req, res) => {
     });
   }
 
-  // 4. Generate JWT
   const token = jwt.sign(
     { id: user.id},
     process.env.JWT_SECRET!,
@@ -114,3 +105,7 @@ export const login = TryCatch(async (req, res) => {
     },
   });
 });
+
+const myProfile = TryCatch((req, res)=> {
+      
+})

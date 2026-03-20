@@ -1,38 +1,45 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { apiRequest, queryClient } from "../lib/queryClient";
-import type { User } from "../../shared/schema";
+import { useToast } from "../hooks/use-toast";
+import type { InsertUser } from "../../shared/schema";
+
 
 
 export default function Register() {
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const { toast } = useToast(); 
+
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    confirmPassword: ""
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
 
 
-  const createQuizMutation = useMutation({
-    mutationFn: async (data: User) => {
-      const response = await apiRequest("POST", "/api/v1/quiz/create-quiz", data);
+  const registerUserMutation = useMutation({
+    mutationFn: async (data: InsertUser) => {
+      const response = await apiRequest("POST", "/api/v1/quiz/register", data);
       return response.json();
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
       toast({ title: "Success", description: "Quiz created successfully!" });
-      // form.reset();
-      onSuccess?.();
+      //onSuccess?.();
     },
+
     onError: (error: Error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to create quiz",
         variant: "destructive"
       });
-    },
+    }
+
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,8 +61,7 @@ export default function Register() {
     };
 
     // 👇 your mutation goes here
-    console.log("payload ready:", payload);
-
+    registerUserMutation.mutate(payload);
   };
 
   const handleGoogle = () => {

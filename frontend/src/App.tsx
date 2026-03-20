@@ -21,7 +21,7 @@ function Router() {
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Route path="/quiz/:id" component={Quiz} />
-        <Route path="/admin" component={Admin} />
+        <Route path="/my-quizzes" component={Admin} />
         <Route path="/contributions" component={Contribution} />
         <Route component={NotFound} />
       </Switch>
