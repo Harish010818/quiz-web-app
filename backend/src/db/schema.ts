@@ -75,9 +75,15 @@ export const attemptsRelations = relations(attempts, ({ one }) => ({
 }));
 
 // Schemas
-export const insertUserSchema = createInsertSchema(users).omit({
+export const insertUserRegisterSchema = createInsertSchema(users).omit({
   id: true,
   createdAt: true,
+});
+
+export const insertUserLoginSchema = createInsertSchema(users).omit({
+  id: true,
+  username: true,
+  createdAt: true
 });
 
 export const insertQuizSchema = createInsertSchema(quizzes).omit({
@@ -115,7 +121,7 @@ export const createQuizSchema = z.object({
 
 // Types
 export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertUser = z.infer<typeof insertUserRegisterSchema>;
 export type Quiz = typeof quizzes.$inferSelect;
 export type InsertQuiz = z.infer<typeof insertQuizSchema>;
 export type Question = typeof questions.$inferSelect;

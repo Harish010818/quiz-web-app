@@ -7,7 +7,6 @@ export const users = pgTable("users", {
     username: text("username").notNull().unique(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
-    role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
     createdAt: timestamp("created_at").defaultNow(),
 });
 export const quizzes = pgTable("quizzes", {
@@ -66,9 +65,14 @@ export const attemptsRelations = relations(attempts, ({ one }) => ({
     }),
 }));
 // Schemas
-export const insertUserSchema = createInsertSchema(users).omit({
+export const insertUserRegisterSchema = createInsertSchema(users).omit({
     id: true,
     createdAt: true,
+});
+export const insertUserLoginSchema = createInsertSchema(users).omit({
+    id: true,
+    username: true,
+    createdAt: true
 });
 export const insertQuizSchema = createInsertSchema(quizzes).omit({
     id: true,

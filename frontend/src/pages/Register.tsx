@@ -3,6 +3,7 @@ import { useState } from "react";
 import { apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
 import type { InsertUser } from "../../shared/schema";
+import { navigate } from "wouter/use-browser-location";
 
 
 
@@ -22,20 +23,21 @@ export default function Register() {
 
   const registerUserMutation = useMutation({
     mutationFn: async (data: InsertUser) => {
-      const response = await apiRequest("POST", "/api/v1/quiz/register", data);
+      console.log("request going from here...");
+      const response = await apiRequest("POST", "/api/v1/user/register", data);
       return response.json();
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
-      toast({ title: "Success", description: "Quiz created successfully!" });
-      //onSuccess?.();
+      toast({ title: "Success", description: "User registered successfully..." });
+      navigate("/");
     },
 
     onError: (error: Error) => {
       toast({
         title: "Error",
-        description: error.message || "Failed to create quiz",
+        description: error.message || "Failed to create account",
         variant: "destructive"
       });
     }

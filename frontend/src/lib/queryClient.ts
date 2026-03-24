@@ -8,18 +8,21 @@ async function throwIfResNotOk(res: Response) {
   }
 }
 
-export async function apiRequest(
+export async function apiRequest( 
   method: string,
   endpoint: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-   const baseURL = import.meta.env.VITE_API_URL;
-   
+  const baseURL = import.meta.env.VITE_API_URL;
+
+  console.log(data); 
+
   const res = await fetch(`${baseURL}${endpoint}`, {
     method,
     headers: data ? { "Content-Type": "application/json" } : {},
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    credentials: "include"
+    
   });
 
   await throwIfResNotOk(res);

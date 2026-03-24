@@ -3,6 +3,9 @@ import { useTheme } from "../contexts/ThemeContext";
 import { CheckCircle, Menu, Moon, Sun, X, User } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { LayoutDashboard, LogIn, LogOut } from "lucide-react";
+import { useAuth } from "../contexts/AuthUserContext";
+import axios from "axios";
+import { toast } from "../hooks/use-toast";
 
 // ✅ Custom hook — always go home first then scroll
 const useScrollToSection = () => {
@@ -11,22 +14,47 @@ const useScrollToSection = () => {
   return (sectionId: string) => {
     navigate("/");
     setTimeout(() => {
-      document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+      document
+        .getElementById(sectionId)
+        ?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
 };
 
 export default function Navbar() {
+  const { authUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-  const scrollTo = useScrollToSection();                  // ✅ hook usage
+  const scrollTo = useScrollToSection();
+
+  const onSignOutHandler = () => {
+    setProfileOpen(false);
+
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/logout`);
+
+        if(res){
+          toast({
+            title: "",
+            description: res.data
+          })
+        }
+      } catch (err) {}
+    };
+
+    fetchUser();
+  };
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(e.target as Node)
+      ) {
         setProfileOpen(false);
       }
     };
@@ -43,9 +71,12 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2" data-testid="logo-link">
+            <Link
+              href="/"
+              className="flex items-center gap-2"
+              data-testid="logo-link"
+            >
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-[hsl(220,90%,55%)] flex items-center justify-center">
                 <CheckCircle className="w-6 h-6 text-primary-foreground" />
               </div>
@@ -54,12 +85,13 @@ export default function Navbar() {
 
             {/* ── Desktop Nav Links ─────────────────────────── */}
             <div className="hidden md:flex items-center gap-6">
-
               {/* Home — wouter Link */}
               <Link
                 href="/"
                 className={`text-sm font-medium transition-colors ${
-                  location === "/" ? "text-primary" : "text-foreground hover:text-primary"
+                  location === "/"
+                    ? "text-primary"
+                    : "text-foreground hover:text-primary"
                 }`}
               >
                 Home
@@ -85,17 +117,17 @@ export default function Navbar() {
               <Link
                 href="/contributions"
                 className={`text-sm font-medium transition-colors ${
-                  location === "/contributions" ? "text-primary" : "text-foreground hover:text-primary"
+                  location === "/contributions"
+                    ? "text-primary"
+                    : "text-foreground hover:text-primary"
                 }`}
               >
-                Contributors
+              Contributors
               </Link>
-
             </div>
 
             {/* Right Side Actions */}
             <div className="flex items-center gap-3">
-
               {/* Profile Circle — Desktop */}
               <div className="relative hidden md:block" ref={profileRef}>
                 <button
@@ -110,8 +142,12 @@ export default function Navbar() {
                 {profileOpen && (
                   <div className="absolute right-0 mt-2 w-44 rounded-xl border border-border bg-card shadow-lg overflow-hidden z-50">
                     <div className="px-4 py-3 border-b border-border">
-                      <p className="text-sm text-muted-foreground">Guest User</p>
-                      <p className="text-xs text-muted-foreground">anonymous@quiz.com</p>
+                      <p className="text-sm text-muted-foreground">
+                        {authUser ? authUser.username : "Guest User"}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {authUser ? authUser.email : "anonymous@quiz.com"}
+                      </p>
                     </div>
 
                     <Link
@@ -130,19 +166,22 @@ export default function Navbar() {
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
                       data-testid="theme-toggle"
                     >
-                      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                      {theme === "dark" ? (
+                        <Sun className="w-4 h-4" />
+                      ) : (
+                        <Moon className="w-4 h-4" />
+                      )}
                       {theme === "dark" ? "Light Mode" : "Dark Mode"}
                     </button>
 
-                    {false ? (
-                      <Link
-                        href="/login"
+                    {authUser ? (
+                      <button
                         className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
-                        onClick={() => setProfileOpen(false)}
+                        onClick={onSignOutHandler}
                       >
                         <LogOut className="w-4 h-4" />
                         Sign out
-                      </Link>
+                      </button>
                     ) : (
                       <Link
                         href="/login"
@@ -164,7 +203,11 @@ export default function Navbar() {
                 data-testid="mobile-menu"
                 onClick={() => setMobileOpen((prev) => !prev)}
               >
-                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {mobileOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
@@ -174,12 +217,13 @@ export default function Navbar() {
         {mobileOpen && (
           <div className="md:hidden border-t border-border bg-card">
             <div className="flex flex-col px-4 py-3 gap-1">
-
               {/* Home */}
               <Link
                 href="/"
                 className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  location === "/" ? "bg-primary/10 text-primary" : "hover:bg-muted text-foreground"
+                  location === "/"
+                    ? "bg-primary/10 text-primary"
+                    : "hover:bg-muted text-foreground"
                 }`}
               >
                 Home
@@ -187,7 +231,10 @@ export default function Navbar() {
 
               {/* Quizzes — scroll */}
               <button
-                onClick={() => { scrollTo("quizzes"); setMobileOpen(false); }}
+                onClick={() => {
+                  scrollTo("quizzes");
+                  setMobileOpen(false);
+                }}
                 className="px-3 py-2.5 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors text-left"
               >
                 Quizzes
@@ -195,7 +242,10 @@ export default function Navbar() {
 
               {/* Leaderboard — scroll */}
               <button
-                onClick={() => { scrollTo("leaderboard"); setMobileOpen(false); }}
+                onClick={() => {
+                  scrollTo("leaderboard");
+                  setMobileOpen(false);
+                }}
                 className="px-3 py-2.5 rounded-lg text-sm font-medium text-foreground hover:bg-muted transition-colors text-left"
               >
                 Leaderboard
@@ -205,12 +255,13 @@ export default function Navbar() {
               <Link
                 href="/contributions"
                 className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  location === "/contributions" ? "bg-primary/10 text-primary" : "hover:bg-muted text-foreground"
+                  location === "/contributions"
+                    ? "bg-primary/10 text-primary"
+                    : "hover:bg-muted text-foreground"
                 }`}
               >
                 Contributors
               </Link>
-
             </div>
 
             {/* Divider */}
@@ -218,11 +269,12 @@ export default function Navbar() {
 
             {/* Bottom Profile Section */}
             <div className="flex flex-col px-4 py-3 gap-1">
-
               <Link
                 href="/my-quizzes"
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  location === "/my-quizzes" ? "bg-primary/10 text-primary" : "hover:bg-muted text-foreground"
+                  location === "/my-quizzes"
+                    ? "bg-primary/10 text-primary"
+                    : "hover:bg-muted text-foreground"
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4" />
@@ -230,14 +282,21 @@ export default function Navbar() {
               </Link>
 
               <button
-                onClick={() => { toggleTheme(); setMobileOpen(false); }}
+                onClick={() => {
+                  toggleTheme();
+                  setMobileOpen(false);
+                }}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted transition-colors w-full text-left"
               >
-                {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
                 {theme === "dark" ? "Light Mode" : "Dark Mode"}
               </button>
 
-              {false ? (
+              {authUser ? (
                 <Link
                   href="/login"
                   className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted text-foreground transition-colors"
@@ -261,8 +320,12 @@ export default function Navbar() {
                   <User className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold">Guest User</p>
-                  <p className="text-xs text-muted-foreground">anonymous@quiz.com</p>
+                  <p className="text-sm font-semibold">
+                    {authUser ? `${authUser.username}` : "Guest User"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {authUser ? `${authUser.email}` : "anonymous@quiz.com"}
+                  </p>
                 </div>
               </div>
             </div>

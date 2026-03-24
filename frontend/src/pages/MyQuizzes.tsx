@@ -19,7 +19,7 @@ import {
   AlertDialogTitle 
 } from "../components/ui/alert-dialog";
 
-export default function Admin() {
+export default function MyQuizzes()  {
   const [deleteQuizId, setDeleteQuizId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("create");
   const { toast } = useToast();

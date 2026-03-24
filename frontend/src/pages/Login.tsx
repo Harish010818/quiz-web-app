@@ -3,12 +3,15 @@ import { useToast } from "../hooks/use-toast";
 import { apiRequest, queryClient } from "../lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import type { InsertUser } from "../../shared/schema";
+import { navigate } from "wouter/use-browser-location";
 
 export default function Login() {
+ 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
+   
 
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +22,7 @@ export default function Login() {
 
   const loginUserMutation = useMutation({
     mutationFn: async (data: Omit<InsertUser, "username">) => {
-      const response = await apiRequest("POST", "/api/v1/quiz/login", data);
+      const response = await apiRequest("POST", "/api/v1/user/login", data);
       return response.json();
     },
 
@@ -27,6 +30,7 @@ export default function Login() {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
       toast({ title: "Success", description: "Quiz created successfully!" });
       //onSuccess?.();
+      navigate("/");
     },
 
     onError: (error: Error) => {

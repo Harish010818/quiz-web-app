@@ -6,25 +6,29 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { QuizProvider } from "./contexts/QuizContext";
 import Quiz from "./pages/Quiz";
-import Admin from "./pages/Admin";
+import MyQuizzes from "./pages/MyQuizzes";
 import NotFound from "./pages/not-found";
 import Home from "./pages/Home";
 import Contribution from "./pages/Contribution";
 import { FormProvider } from "./contexts/formContext";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import { AuthProvider } from "./contexts/AuthUserContext";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function Router() {
   return (
     <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/login" component={Login} />
-        <Route path="/register" component={Register} />
-        <Route path="/quiz/:id" component={Quiz} />
-        <Route path="/my-quizzes" component={Admin} />
-        <Route path="/contributions" component={Contribution} />
-        <Route component={NotFound} />
-      </Switch>
+      <Route path="/" component={Home} />
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/quiz/:id" component={Quiz} />
+      <Route path="/my-quizzes">
+      <ProtectedRoute><MyQuizzes /></ProtectedRoute>
+      </Route>
+      <Route path="/contributions" component={Contribution} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
@@ -34,10 +38,12 @@ function App() {
       <TooltipProvider>
         <ThemeProvider>
           <QuizProvider>
-          <FormProvider>
-            <Toaster />
-            <Router />
-           </FormProvider>
+            <FormProvider>
+              <AuthProvider>
+                <Toaster />
+                <Router />
+              </AuthProvider>
+            </FormProvider>
           </QuizProvider>
         </ThemeProvider>
       </TooltipProvider>

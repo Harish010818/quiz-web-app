@@ -73,23 +73,6 @@ export declare const users: import("drizzle-orm/pg-core").PgTableWithColumns<{
             identity: undefined;
             generated: undefined;
         }, {}, {}>;
-        role: import("drizzle-orm/pg-core").PgColumn<{
-            name: "role";
-            tableName: "users";
-            dataType: "string";
-            columnType: "PgText";
-            data: "user" | "admin";
-            driverParam: string;
-            notNull: true;
-            hasDefault: true;
-            isPrimaryKey: false;
-            isAutoincrement: false;
-            hasRuntimeDefault: false;
-            enumValues: ["user", "admin"];
-            baseColumn: never;
-            identity: undefined;
-            generated: undefined;
-        }, {}, {}>;
         createdAt: import("drizzle-orm/pg-core").PgColumn<{
             name: "created_at";
             tableName: "users";
@@ -557,14 +540,17 @@ export declare const optionsRelations: import("drizzle-orm").Relations<"options"
 export declare const attemptsRelations: import("drizzle-orm").Relations<"attempts", {
     quiz: import("drizzle-orm").One<"quizzes", true>;
 }>;
-export declare const insertUserSchema: z.ZodObject<{
+export declare const insertUserRegisterSchema: z.ZodObject<{
     username: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
-    role: z.ZodOptional<z.ZodEnum<{
-        user: "user";
-        admin: "admin";
-    }>>;
+}, {
+    out: {};
+    in: {};
+}>;
+export declare const insertUserLoginSchema: z.ZodObject<{
+    email: z.ZodString;
+    password: z.ZodString;
 }, {
     out: {};
     in: {};
@@ -618,7 +604,7 @@ export declare const createQuizSchema: z.ZodObject<{
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
+export type InsertUser = z.infer<typeof insertUserRegisterSchema>;
 export type Quiz = typeof quizzes.$inferSelect;
 export type InsertQuiz = z.infer<typeof insertQuizSchema>;
 export type Question = typeof questions.$inferSelect;

@@ -2,24 +2,37 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { TryCatch } from "../utils/TryCatch.js";
 import { db } from "../db/index.js";
-import { users } from "../db/schema.js";
+import {
+  insertUserLoginSchema,
+  insertUserRegisterSchema,
+  users,
+} from "../db/schema.js";
 import { eq } from "drizzle-orm";
+import type { AuthRequest } from "../middleware/isAuth.js";
 
 export const register = TryCatch(async (req, res) => {
-  const { username, email, password } = req.body;
+  console.log("registering....");
 
-  if (!username || !email || !password) {
+  const parsed = insertUserRegisterSchema.safeParse(req.body);
+
+  if (!parsed.success) {
     return res.status(400).json({
       success: false,
-      message: "Username, email and password are required",
+      message: parsed.error, // ✅ zod validation error
     });
   }
+
+  console.log("user name and sometinig");
+  const { username, email, password } = parsed.data;
+
+  console.log(email);
 
   const [existingUser] = await db
     .select()
     .from(users)
     .where(eq(users.email, email));
 
+  console.log(existingUser);
   if (existingUser) {
     return res.status(409).json({
       success: false,
@@ -27,55 +40,60 @@ export const register = TryCatch(async (req, res) => {
     });
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10); // ✅ fixed
 
   const [newUser] = await db
     .insert(users)
     .values({
       username,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     })
     .returning();
 
-  const token = jwt.sign(
-    { id: newUser!.id },
-    process.env.JWT_SECRET!,
-    { expiresIn: "7d" }
-  );
+  console.log(newUser);
 
-  res.status(201).json({
-    success: true,
-    message: "User registered successfully",
-    token,
-    user: {
-      id: newUser!.id,
-      username: newUser!.username,
-      email: newUser!.email
-    },
+  const token = jwt.sign({ id: newUser!.id }, process.env.JWT_SECRET!, {
+    expiresIn: "7d",
   });
+
+  res
+    .status(201)
+    .cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    .json({
+      success: true,
+      message: "User registered successfully",
+      user: {
+        id: newUser!.id,
+        username: newUser!.username,
+        email: newUser!.email,
+      },
+    });
 });
 
-
 export const login = TryCatch(async (req, res) => {
-  const { email, password } = req.body;
+  const parsed = insertUserLoginSchema.safeParse(req.body);
 
-  if (!email || !password) {
+  if (!parsed.success) {
     return res.status(400).json({
       success: false,
-      message: "Email and password are required",
+      message: parsed.error,
     });
   }
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email));
+  const { email, password } = parsed.data; // ✅ clean destructure
+
+  const [user] = await db.select().from(users).where(eq(users.email, email));
 
   if (!user) {
     return res.status(404).json({
       success: false,
-      message: "Invalid email or password",         // ✅ don't expose which one is wrong
+      message: "Invalid email or password",
     });
   }
 
@@ -88,24 +106,39 @@ export const login = TryCatch(async (req, res) => {
     });
   }
 
-  const token = jwt.sign(
-    { id: user.id},
-    process.env.JWT_SECRET!,
-    { expiresIn: "7d" }
-  );
+  const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
+    expiresIn: "7d",
+  });
+
+  res
+    .status(200)
+    .cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 24 * 60 * 60 * 1000,
+    })
+    .json({
+      success: true,
+      message: "Login successfull",
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+});
+
+export const myProfile = TryCatch(async (req: AuthRequest , res) => {
+  const user = req.user;
 
   res.status(200).json({
     success: true,
-    message: "Login successful",
-    token,
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.email
-    },
+    user,
   });
 });
 
-const myProfile = TryCatch((req, res)=> {
-      
-})
+
+export const logout = TryCatch( async(_: AuthRequest, res) => {
+  return res.status(200).cookie("token", " ", { maxAge: 0}).json({message: "logged out successfully"})
+});
