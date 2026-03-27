@@ -110,6 +110,9 @@ export const myProfile = TryCatch(async (req, res) => {
     });
 });
 export const logout = TryCatch(async (_, res) => {
-    return res.status(200).cookie("token", " ", { maxAge: 0 }).json({ message: "logged out successfully" });
+    return res
+        .status(200)
+        .cookie("token", " ", { maxAge: 0 })
+        .json({ message: "logged out successfully" });
 });
 //# sourceMappingURL=user.js.map

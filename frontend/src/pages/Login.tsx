@@ -4,6 +4,7 @@ import { apiRequest, queryClient } from "../lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
 import type { InsertUser } from "../../shared/schema";
 import { navigate } from "wouter/use-browser-location";
+import { useAuth } from "../contexts/AuthUserContext";
 
 export default function Login() {
  
@@ -12,7 +13,7 @@ export default function Login() {
     password: "",
   });
    
-
+  const { fetchUser } = useAuth();
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -30,6 +31,7 @@ export default function Login() {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
       toast({ title: "Success", description: "Quiz created successfully!" });
       //onSuccess?.();
+      fetchUser();
       navigate("/");
     },
 

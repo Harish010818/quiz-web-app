@@ -6,8 +6,9 @@ import { LayoutDashboard, LogIn, LogOut } from "lucide-react";
 import { useAuth } from "../contexts/AuthUserContext";
 import axios from "axios";
 import { toast } from "../hooks/use-toast";
+import { navigate } from "wouter/use-browser-location";
 
-// ✅ Custom hook — always go home first then scroll
+//  Custom hook — always go home first then scroll
 const useScrollToSection = () => {
   const [, navigate] = useLocation();
 
@@ -22,7 +23,7 @@ const useScrollToSection = () => {
 };
 
 export default function Navbar() {
-  const { authUser } = useAuth();
+  const { authUser, setAuthUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
   const [profileOpen, setProfileOpen] = useState(false);
@@ -33,20 +34,22 @@ export default function Navbar() {
   const onSignOutHandler = () => {
     setProfileOpen(false);
 
-    const fetchUser = async () => {
+    const SignOutUser = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/v1/user/logout`);
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/v1/user/logout`,
+          { withCredentials: true },
+        );
 
-        if(res){
-          toast({
-            title: "",
-            description: res.data
-          })
+        if (res) {
+          toast({ title: "", description: res.data?.message });
+          navigate("/login");
+          setAuthUser(null);
         }
       } catch (err) {}
     };
 
-    fetchUser();
+    SignOutUser();
   };
 
   useEffect(() => {
@@ -122,7 +125,7 @@ export default function Navbar() {
                     : "text-foreground hover:text-primary"
                 }`}
               >
-              Contributors
+                Contributors
               </Link>
             </div>
 
@@ -175,17 +178,17 @@ export default function Navbar() {
                     </button>
 
                     {authUser ? (
-                      <button
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
+                      <div
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors cursor-pointer"
                         onClick={onSignOutHandler}
                       >
                         <LogOut className="w-4 h-4" />
                         Sign out
-                      </button>
+                      </div>
                     ) : (
                       <Link
                         href="/login"
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors cursor-pointer"
                         onClick={() => setProfileOpen(false)}
                       >
                         <LogIn className="w-4 h-4" />
@@ -297,17 +300,17 @@ export default function Navbar() {
               </button>
 
               {authUser ? (
-                <Link
-                  href="/login"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted text-foreground transition-colors"
+                <div
+                  onClick={onSignOutHandler}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted text-foreground transition-colors cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
                   Sign out
-                </Link>
+                </div>
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted text-foreground transition-colors"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium hover:bg-muted text-foreground transition-colors cursor-pointer"
                 >
                   <LogIn className="w-4 h-4" />
                   Sign in

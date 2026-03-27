@@ -129,7 +129,7 @@ export const login = TryCatch(async (req, res) => {
     });
 });
 
-export const myProfile = TryCatch(async (req: AuthRequest , res) => {
+export const myProfile = TryCatch(async (req: AuthRequest, res) => {
   const user = req.user;
 
   res.status(200).json({
@@ -138,7 +138,9 @@ export const myProfile = TryCatch(async (req: AuthRequest , res) => {
   });
 });
 
-
-export const logout = TryCatch( async(_: AuthRequest, res) => {
-  return res.status(200).cookie("token", " ", { maxAge: 0}).json({message: "logged out successfully"})
+export const logout = TryCatch(async (_: AuthRequest, res) => {
+  return res
+    .status(200)
+    .cookie("token", " ", { maxAge: 0 })
+    .json({ message: "logged out successfully" });
 });

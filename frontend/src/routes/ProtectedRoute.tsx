@@ -15,7 +15,6 @@ console.log(loading);
   }
 
 console.log(authUser);  
-
 return authUser ? children : <Redirect to="/" />; 
 }
 
