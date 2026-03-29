@@ -6,7 +6,7 @@ const { authUser, loading } = useAuth();
 
 if (loading) {
     return (
-      <div className="h-screen flex justify-center bg-white items-center text-2xl text-black">
+      <div className="h-screen flex justify-center bg-background items-center text-2xl text-foreground">
       Loading...
       </div>
     );
