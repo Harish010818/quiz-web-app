@@ -24,7 +24,9 @@ function Router() {
       <Route path="/register" component={Register} />
       <Route path="/quiz/:id" component={Quiz} />
       <Route path="/my-quizzes">
-      <ProtectedRoute><MyQuizzes /></ProtectedRoute>
+        <ProtectedRoute>
+          <MyQuizzes />
+        </ProtectedRoute>
       </Route>
       <Route path="/contributions" component={Contribution} />
       <Route component={NotFound} />
@@ -35,18 +37,18 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <ThemeProvider>
-          <QuizProvider>
-            <FormProvider>
-              <AuthProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <ThemeProvider>
+            <QuizProvider>
+              <FormProvider>
                 <Toaster />
                 <Router />
-              </AuthProvider>
-            </FormProvider>
-          </QuizProvider>
-        </ThemeProvider>
-      </TooltipProvider>
+              </FormProvider>
+            </QuizProvider>
+          </ThemeProvider>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

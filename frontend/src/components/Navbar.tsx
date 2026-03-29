@@ -23,6 +23,7 @@ const useScrollToSection = () => {
 };
 
 export default function Navbar() {
+  const { fetchUser } = useAuth();
   const { authUser, setAuthUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [location] = useLocation();
@@ -30,6 +31,12 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const scrollTo = useScrollToSection();
+
+  const navigateTOMyQuizzes = () => {
+    setProfileOpen(false);
+    fetchUser();
+    navigate("/my-quizzes");
+  };
 
   const onSignOutHandler = () => {
     setProfileOpen(false);
@@ -153,16 +160,15 @@ export default function Navbar() {
                       </p>
                     </div>
 
-                    <Link
-                      href="/my-quizzes"
+                    <button
                       className={`flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted transition-colors ${
                         location === "/my-quizzes" ? "text-primary" : ""
                       }`}
-                      onClick={() => setProfileOpen(false)}
+                      onClick={navigateTOMyQuizzes}
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       My Quizzes
-                    </Link>
+                    </button>
 
                     <button
                       onClick={toggleTheme}
@@ -272,8 +278,8 @@ export default function Navbar() {
 
             {/* Bottom Profile Section */}
             <div className="flex flex-col px-4 py-3 gap-1">
-              <Link
-                href="/my-quizzes"
+              <button
+                onClick={navigateTOMyQuizzes}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   location === "/my-quizzes"
                     ? "bg-primary/10 text-primary"
@@ -282,7 +288,7 @@ export default function Navbar() {
               >
                 <LayoutDashboard className="w-4 h-4" />
                 My Quizzes
-              </Link>
+              </button>
 
               <button
                 onClick={() => {

@@ -4,6 +4,7 @@ import { apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "../hooks/use-toast";
 import type { InsertUser } from "../../shared/schema";
 import { navigate } from "wouter/use-browser-location";
+import { useAuth } from "../contexts/AuthUserContext";
 
 
 
@@ -12,6 +13,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const { toast } = useToast(); 
+  const { fetchUser } = useAuth();
 
   const [form, setForm] = useState({
     username: "",
@@ -31,6 +33,7 @@ export default function Register() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quizzes"] });
       toast({ title: "Success", description: "User registered successfully..." });
+      fetchUser();
       navigate("/");
     },
 

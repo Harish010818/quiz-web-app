@@ -1,6 +1,7 @@
 import axios from "axios";
 import { User } from "lucide-react";
 import { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "../hooks/use-toast";
 
 interface User {
   username: string;
@@ -33,6 +34,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setAuthUser(res.data.user);
         }
       } catch (err) {
+        toast({
+          title : "Authentication Error",
+          description: "User is not authenticated please sign up..."
+        })
       } finally {
         setLoading(false);
       }

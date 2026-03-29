@@ -16,7 +16,7 @@ export const isAuth = async (req: AuthRequest, res: Response, next: NextFunction
   if (!token) {
     return res
       .status(401)
-      .json({ success: false, message: "Not authenticated" });
+      .json({ success: false, message: "User is Not authenticated" });
   }
 
   try {
