@@ -18,7 +18,8 @@ export default function Quiz() {
     enabled: !!id,
   });
   
-  const quiz: QuizWithQuestions = fetchQuiz ?? sampleQuizQus.find((q) => q.id === id) as QuizWithQuestions;  
+  const quiz: QuizWithQuestions = fetchQuiz 
+  // ?? sampleQuizQus.find((q) => q.id === id) as QuizWithQuestions;  
   console.log(quiz);
   
   useEffect(() => {
