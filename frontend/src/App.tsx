@@ -25,7 +25,7 @@ function Router() {
       <Route path="/quiz/:id" component={Quiz} />
       <Route path="/my-quizzes">
         <ProtectedRoute>
-          <MyQuizzes />
+            <MyQuizzes />
         </ProtectedRoute>
       </Route>
       <Route path="/contributions" component={Contribution} />
