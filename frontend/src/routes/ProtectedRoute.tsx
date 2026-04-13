@@ -7,11 +7,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (loading) {
     return (
       <div className="h-screen flex flex-col gap-4 justify-center items-center bg-background">
-        {/* Spinner */}
+        
         <div className="relative w-12 h-12">
-          {/* Track ring */}
           <div className="absolute inset-0 rounded-full border-4 border-muted" />
-          {/* Spinning ring */}
           <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" />
         </div>
 
