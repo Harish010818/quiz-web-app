@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         </div>
 
         <p className="text-sm font-medium text-muted-foreground tracking-wide">
-          Loading...
+          Redirecting to MyQuizzes...
         </p>
       </div>
     );
