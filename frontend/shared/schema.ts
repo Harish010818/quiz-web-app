@@ -1,4 +1,5 @@
 
+import { z } from 'zod';
 
 export interface User {
   id: string;
@@ -62,11 +63,16 @@ export interface Attempt {
 }
 
 // Relations/Joined Types
-export interface QuizWithQuestions extends Quiz {
-  questions: (Question & {
-    options: Option[];
-  })[];
-}
+export type QuizWithQuestions = Quiz & {questions: (Question & { options: Option[] })[]};
 
-
-export const createQuizSchema = {};
+export const createQuizSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, "Title is required"),
+  category: z.string().min(1, "Category is required"),
+  difficulty: z.string().min(1, "Difficulty is required"),
+  questions: z.array(z.object({
+    text: z.string().min(1, "Question text is required"),
+    options: z.array(z.string().min(1, "Option text is required")).length(4, "Must have exactly 4 options"),
+    correctOption: z.number().min(0).max(3, "Correct option must be between 0-3"),
+  })).min(1, "At least one question is required"),
+});
